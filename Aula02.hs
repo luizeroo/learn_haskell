@@ -37,4 +37,21 @@ module Aula02 where
     triplicarLista :: [Int] -> [Int]
     triplicarLista num = [3 * x | x <- num]
     
+    -- Lista _ baralho
+        -- baralho :: [] (String, String)
+    baralho :: [(Char, String)]
+    baralho = [(valor, naipe) | valor <- "A123456789JQK", naipe <- ["PAUS", "COPAS", "ESPADAS", "OUROS"]]
+    -- baralho = [(valor, naipe) | valor <- "A123456789JQK", naipe <- ["PAUS", "COPAS", "ESPADAS", "OUROS"], DEPOIS DESSA VIRGULA É FILTRO (sem a seta)]
     
+    -- Pokemon
+        -- ZIP: pega duas listas e "zipa", junta com dois elementos.
+    pokemon :: [(Int, String)]
+    pokemon = zip [1 .. 6] ["Squirtle", "Squitle2", "Squirtle3", "Charmander1", "Chamander2", "Chamander3"]
+    
+    -- Pessoas
+    pessoas :: [(String, String)]
+    pessoas = [(p1, p2) | p1 <- ["Jose", "Gustavo", "Lucas"], p2 <- ["Jose", "Gustavo", "Lucas"], p1 /= p2]
+    
+    -- Pegar o próprio valor (e somar 10) e duplicar CHAR.
+    anexar :: Char -> Int -> (Int, String)
+    anexar caracter valor = (valor+10, caracter:[caracter])
