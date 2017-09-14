@@ -55,3 +55,19 @@ module Aula02 where
     -- Pegar o próprio valor (e somar 10) e duplicar CHAR.
     anexar :: Char -> Int -> (Int, String)
     anexar caracter valor = (valor+10, caracter:[caracter])
+    
+{-
+    _____________________________________________________________________________________________________________
+-}
+
+-- EXERCICIOS
+    lista01 :: [Int]
+    lista01 = [11 * n | n <- [0, 1, 11]] -- nnnn
+    
+    lista02 :: [Int]
+    lista02 = [x | x <- [1 .. 40], mod x 4 /= 0]
+    
+    -- lista03 :: [String], página 32
+        -- ['A':x :"BB" | x<- ['a' .. 'f'] ]
+    lista03 = ['A':x:"BB" | x<-['a' .. 'f']]
+    
