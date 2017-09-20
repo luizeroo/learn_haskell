@@ -56,9 +56,48 @@ module Aula02 where
     anexar :: Char -> Int -> (Int, String)
     anexar caracter valor = (valor+10, caracter:[caracter])
     
-{-
-    _____________________________________________________________________________________________________________
--}
+    -- SOMAR DE CARACTERES
+    somar2P :: String -> String -> Int
+    somar2P xs ys = length xs + length ys
+    
+    -- TAMANHO
+    tamanho :: String -> Int
+    tamanho ks = length ks
+    
+    -- COMPREENSAO DE LISTAS
+    -- dobrar uma lista de valores 
+    dobrarLista :: [Int] -> [Int]
+    dobrarLista lista = [2*numeros | numeros<-lista]
+    
+    -- triplar uma lista de valores
+    triplarLista :: [Int] -> [Int]
+    triplarLista tripla = [3*numeros | numeros<-tripla]
+    
+    -- map de uma lista, 2*x+1 se distribuirá a todos elementos da lista [0 .. 10] , com exceção do número 5
+    mapLista :: [Int]
+    mapLista = [2 * x + 1 | x<-[0 .. 10], x /= 5]
+    
+    -- map de uma lista, 3 * 3 +3 -4 a todos elementos pares até 30
+    mapLista2 :: [Int]
+    mapLista2 = [3*3*x+3-4 | x <- [0,2 .. 30]]
+    
+    {-
+        PRA LIDAR COM LISTAS
+    -}
+        -- VALOR | VALOR <- LISTA , CONDICAO 1 .. CONDICAON
+    treinarLista :: [Int]
+    treinarLista = [valor | valor <- [1..50], mod valor 2 /= 0]
+        
+    
+    menorDeDoisNumeros :: Int -> Int -> Int
+    menorDeDoisNumeros x y = if x <= y then x else y
+    
+    
+    {-
+        TUPLAS
+    -}
+
+
 
 -- EXERCICIOS
     lista01 :: [Int]
@@ -68,6 +107,9 @@ module Aula02 where
     lista02 = [x | x <- [1 .. 40], mod x 4 /= 0]
     
     -- lista03 :: [String], página 32
-        -- ['A':x :"BB" | x<- ['a' .. 'f'] ]
+        -- ['A':x :"BB" | x<- ['a' .. 'f']]
     lista03 = ['A':x:"BB" | x<-['a' .. 'f']]
     
+    -- [1.0,0.5,0.25,0.125,0.0625,0.03125]
+
+-- Exercicios 2.2 - Crie uma função que verifique se o tamanho de uma string é par ou não
