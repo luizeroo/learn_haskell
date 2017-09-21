@@ -115,7 +115,7 @@ module Exercicios where
     patternMatching (x,y) = x+y
     
     -- Primeiro DATA CONSTRUCTOR
-    data Dia = Segunda | Terca | Quarta | Quinta | Sexta | Sabado | Domingo deriving (Show, Enum)
+    data Dia = Segunda | Terca | Quarta | Quinta | Sexta | Sabado | Domingo deriving (Show, Enum, Eq)
     
     agenda :: Dia -> String 
     agenda Segunda = "Sobrino"
@@ -217,14 +217,170 @@ module Exercicios where
     pergAnd pergunta1 pergunta2
         | pergunta1 == pergunta2 = True
         | otherwise = False
-    
-    
-    -- or
-   -- pergOr :: Pergunta -> Pergunta -> Bool
---    pergOr pergunta1 pergunta2
-  --      | pergunta1 == pergunta2 = True
-    
+        
+    pergOr :: Pergunta -> Pergunta -> Bool
+    pergOr pergunta1 pergunta2
+        | pergunta1 == Nao && pergunta2 == Nao = False
+        | otherwise = True
+        
     -- Temperatura
-    data Temperatura = Celsius | Farenheit | Kelvin 
+    data Temperatura = C | F | K deriving Eq
     
-    converterCelsius :: Double -> Temperatura -> Temperatura
+    converterC :: Double -> Temperatura -> Double
+    converterC valor temperatura
+        | temperatura == K = valor - 273.15
+        | temperatura == F = valor - 32 / 1.8
+        | otherwise = valor
+        
+    converterK :: Double -> Temperatura -> Double
+    converterK valor temperatura
+        | temperatura == C = valor + 273
+        | temperatura == F = (valor + 459.67) * 5/9
+        | otherwise = valor
+        
+    -- 3.14
+   -- data Valido = VSim String | VNao deriving (Show, Eq)
+    
+    --isNomeValido :: String -> Valido
+    --isNomeValido nome = VSim
+    
+   
+   
+   {- LAMBDA -}
+   -- Função anonima, troca o funcionamento.
+   -- o lambda ---->>>>>> (\ x y -> x + y)
+---- x e y = parametro
+----- x+y = expressao
+
+-- EXEMPLO DE LAMBDA NO GHCI
+-- (\ x y z -> reverse x ++ " " ++ y ++ " " ++ tail z) "OLA" "ALO" "PHP"
+    -- RESPOSTA: "ALO ALO HP"
+{-
+    let dobro = \x -> 2*x
+    dobro 3
+    6
+    
+    ----->  \   === significa LAMBDA
+
+let dobro = (2*)
+dobro 3
+6
+let m = (>0)
+m 3
+True
+
+    let n = (<=4)
+*Aula04> n 3
+True
+
+let f = (++" MUNDO")
+let f2 = \x -> x ++ " MUNDO"
+-}
+
+
+
+
+{- HIGH ORDER FUNCTION -}
+-- Lida com funções e tem duas características
+    -- Podem receber uma função como parametro 
+    -- podem retornar outras funções
+    
+    highOrder :: (Int -> Int) -> Int 
+    highOrder fooH = 1 + fooH 5
+    
+    highDobro :: Int -> Int
+    highDobro x = 2*x
+    
+    highTriplo :: Int -> Int 
+    highTriplo x = 3*x
+    
+    {- Currying -}
+    somarTresNumeros :: Int -> Int -> Int -> Int 
+    somarTresNumeros x y z = x+y+z
+    
+    somarCurr :: Int -> Int
+    somarCurr = somarTresNumeros 3 4
+    
+    -- 4.4 Funções de ALta Ordem
+    
+    -- 4.1 Função que retorne a média de um [Double]
+    exe41 :: [Double] -> Double
+    exe41 lista = (foldl (+) 0 lista) / (fromIntegral $ length lista)
+    
+    -- 4.2 = Função que recebe [String] e retorna as true
+    exe42 :: [String] -> [String]
+    exe42 palavras = filter lista26 palavras
+    
+    -- 4.3 Função que filtre os numeros pares e outra que filtre os ímpares de uma lista recebida
+    filtrarPar :: [Int] -> [Int]
+    filtrarPar lista = [novaLista | novaLista <- lista, mod novaLista 2 == 0]
+    
+    -- 4.3 Função que filtre os numeros pares e outra que filtre os ímpares de uma lista recebida
+    filtrarImpar :: [Int] -> [Int]
+    filtrarImpar lista = [novaLista | novaLista <- lista, mod novaLista 2 /= 0]
+    
+    -- 4.4 Filtrar os primos
+    --filtrarPrimos :: [Int] -> [Int]
+    -- PAGINA 58
+    
+    -- 4.6 dobrar menos os multiplos de 4
+    dobrarMap :: [Int] -> [Int]
+    dobrarMap lista = [2*novaLista | novaLista <- lista, mod novaLista 4 /= 0, novaLista /= 2]
+    {-
+    map (\x -> 3*x) [1 .. 10]
+    [3,6,9,12,15,18,21,24,27,30]
+    -}
+    
+    -- 4.7 lista de dias, filtra dia
+    filtrarDia :: [Dia] -> [Dia]
+    filtrarDia dia = [item | item <- dia, item /= Terca]
+    
+    -- 4.8 Implantar Money com valor e correncia
+    
+    -- 4.8.1 Filtrar todos os dollares de uma lista de dinheiro
+        --filtrarDollar :: [Dinheiro] -> [Bool]
+        --filtrarDollar (Dinheiro valor correncia) 
+        --    | correncia == Dollar = True
+        --    | otherwise = False
+    filtrarDollares :: [Dinheiro] -> [Dinheiro]
+    filtrarDollares dinheiros = filter (\ (Dinheiro v c) -> c == Dollar ) dinheiros
+    
+    -- 4.8.2 
+    
+    -- 4.8.3 Quantidade de dollares
+    --contarDollar :: [Dinheiro] -> Int 
+    --contarDollar dollares = length $ filtrarDollar dollares
+    variosDinheiros = [(Dinheiro 10 Real),(Dinheiro 20 Libra),(Dinheiro 2 Dollar), (Dinheiro 10 Dollar)]
+    
+    qntDollares :: [Dinheiro] -> Int
+    qntDollares dinheiros = length $ filtrarDollares dinheiros
+    
+    -- foldl (\soma vi -> soma + vi) 0 [1 .. 5]
+    -- 4.9 Usando foldl, crie lambdas
+        -- 4.9.1 contar numeros negativos de uma lista
+    
+    --foldl (\soma vi -> soma + 1) 0 $ filter (>=0) [-10 .. 5]
+    
+        -- 4.9.2 contar letras 'p' de uma string 
+   -- foldl (\soma item -> soma+1) 0 $ filter (=='p') "pintinhoppp"
+   
+        -- 4.9.3 Contar sabados em uma lista de semanas
+    funcao493 = foldl (\resultado item -> resultado+1) 0 $ filter (==Sabado) [Segunda, Terca, Quarta, Sabado, Sabado, Domingo, Domingo, Terca, Sabado]
+    
+    -- Para, a partir de uma lista de [DiaSemana] , retornar a soma dos dias. Exemplo: [Segunda, Segunda, Quarta] deve retornar 5 . Use uma função auxiliar para converter DiaSemana para Int . 
+    numD :: Dia -> Int
+    numD Segunda = 1
+    numD Terca = 2
+    numD Quarta = 3
+    numD Quinta = 4
+    numD Sexta = 5
+    numD Sabado = 6
+    numD Domingo = 7
+    
+    funcao494 = foldl (\soma itens -> soma + itens) 0 $ map numD [Domingo, Segunda, Terca, Quarta, Quinta]
+    
+    -- 4.10 - Refazer os exercícios usando .  $   |>
+    
+    
+    {- CAPITULO 5 -}
+    
