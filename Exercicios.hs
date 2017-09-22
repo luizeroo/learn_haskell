@@ -532,4 +532,52 @@ let f2 = \x -> x ++ " MUNDO"
     
     
     {- CAPITULO 7 - FUNTOR -}
+    data Bolsa a = BolsaVazia
+                | BolsaUm a 
+                | BolsaDois a a deriving Show 
+    
+    instance Functor Bolsa where
+        fmap _ BolsaVazia = BolsaVazia
+        fmap funcao (BolsaUm a) = BolsaUm (funcao a)
+        fmap funcao (BolsaDois x y) = BolsaDois (funcao y) (funcao x)
+        
+    
+    data TuplaA a = TuplaA a a deriving Show
+    
+    instance Functor TuplaA where 
+        fmap f (TuplaA x y) = TuplaA (id.f $ y) (id.f $ x)
+        
+    exemploFunctor = fmap (\x -> x) $ TuplaA 2 5
+    
+    -- FUNCTOR MAYBE
+    -- Conserta funções parciais
+    protegerHead :: [a] -> Maybe a
+    protegerHead [] = Nothing
+    protegerHead parametro = Just (head parametro)
+    
+    -- Arrume a exceção de Divisãoperates
+    protegerDivisao :: Double -> Double -> Maybe Double
+    protegerDivisao _ 0 = Nothing
+    protegerDivisao x y = Just (x/y)
+    
+    testandoMaybe :: String -> Maybe String 
+    testandoMaybe [] = Nothing 
+    testandoMaybe parametro = Just parametro
+    
+    safeTail :: String -> Maybe String
+    safeTail [] = Nothing
+    safeTail xs = Just $ tail xs
+    
+    
+    -- Either
+    safeHead2 :: [a] -> Either String a 
+    safeHead2 [] = Left "Lista vazia"
+    safeHead2 a = Right (head a)
+    
+    pegarPosicao :: [a] -> Int -> Either String a 
+    pegarPosicao [] _ = Left "Lista vazia"
+    pegarPosicao lista numero
+        | numero < 0 = Left "Posicao negativa"
+        | numero > length lista - 1 = Left "Posicao acima do limite"
+        | otherwise = Right (lista !! numero)
     
