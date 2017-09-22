@@ -1,4 +1,5 @@
 module Exercicios where
+    import Data.Monoid
     -- menor de dois numeros 
     exercicio001 :: Int -> Int -> Int
     exercicio001 x y = if x <= y then x else y
@@ -238,6 +239,23 @@ module Exercicios where
         | temperatura == F = (valor + 459.67) * 5/9
         | otherwise = valor
         
+    -- garcia
+    fatorialg :: Int -> Int
+    fatorialg n 
+        | n <= 0 = 1
+        | otherwise = n * fatorialg (n-1)
+    
+    modulo :: Double -> Double
+    modulo x
+        | x >= 0 = x
+        | otherwise  = -x
+    
+    elimVogal :: String -> String
+    elimVogal [] = []
+    elimVogal (x:xs)
+        | elem x "AEIOUaeiou" = elimVogal xs
+        | otherwise = x : elimVogal xs
+        
     -- 3.14
    -- data Valido = VSim String | VNao deriving (Show, Eq)
     
@@ -358,11 +376,10 @@ let f2 = \x -> x ++ " MUNDO"
     -- foldl (\soma vi -> soma + vi) 0 [1 .. 5]
     -- 4.9 Usando foldl, crie lambdas
         -- 4.9.1 contar numeros negativos de uma lista
-    
-    --foldl (\soma vi -> soma + 1) 0 $ filter (>=0) [-10 .. 5]
+    funcao491 = foldl (\soma vi -> soma + 1) 0 $ filter (>0) [-10 .. 5]
     
         -- 4.9.2 contar letras 'p' de uma string 
-   -- foldl (\soma item -> soma+1) 0 $ filter (=='p') "pintinhoppp"
+    funcao492 = foldl (\soma item -> soma+1) 0 $ filter (=='p') "pintinhoppp"
    
         -- 4.9.3 Contar sabados em uma lista de semanas
     funcao493 = foldl (\resultado item -> resultado+1) 0 $ filter (==Sabado) [Segunda, Terca, Quarta, Sabado, Sabado, Domingo, Domingo, Terca, Sabado]
@@ -377,10 +394,142 @@ let f2 = \x -> x ++ " MUNDO"
     numD Sabado = 6
     numD Domingo = 7
     
-    funcao494 = foldl (\soma itens -> soma + itens) 0 $ map numD [Domingo, Segunda, Terca, Quarta, Quinta]
+    funcao494 = foldl (\soma itens -> soma + itens) 0 $ map numD [Domingo, Segunda, Terca, Quarta, Quinta, Sabado]
     
     -- 4.10 - Refazer os exercícios usando .  $   |>
     
     
-    {- CAPITULO 5 -}
+    {- CAPITULO 5  POLIMORFISMO PARAMÉTRICO -}
+    data Carteira a = Nada
+                      | UmItem a 
+                      | DoisItens a a deriving Show
+    {-
+        :t Nada = Carteira a    
+        :t UmItem = a -> Carteira a
+        :t DoisItens = a -> a -> Carteira a
+    -}
+    
+    data Coisa a b = ZeroCoisa
+                   | UmaCoisa a 
+                   | DuasCoisas a b deriving Show
+    {-
+        :t Coisa = Coisa a
+        :t UmaCoisa = a -> UmaCoisa a
+        :t DuasCoisas = a -> a -> DuasCoisas a
+    -}
+    
+    -- Aqui começamos a falar de TYPE PARAMETER. São equivalentes ao generics do Java no Haskell.
+    
+    data ExemploCoisa ec = ExemploZero
+                            | ExemploUm ec 
+                            | ExemploDois ec ec deriving Show
+    
+    -- Aqui, usando o :kind, podemos saber quanto TYPE PARAMETERS existem no seu tipo
+    -- :kind Int = *
+        -- É assim pq não possui parametro de tipo
+    -- :kind ExemplCoisa = * -> *
+    
+    -- O kind enxerga os tipos como FUNÇÕES DE TIPOS.
+    
+    data ExemploKind a b = ExemploKind a b
+    
+    -- FACA UM DATA TYPE = 4 + a ^ 3 + a 
+   -- data Quatro = A | B | C | D 
+    --data Letras a = Letras Quatro | Letrasb a a a | Letrasc a
+    
+    -- FAZ DE NOVO = 4 + a^3 + a 
+   -- data ValorQuatro = Av | Bv | Cv | Dv 
+    --data LetrasValor a = LetrasValor ValorQuatro | OutraTres a a a | OutraUm a
+    --
+    
+    dobrar :: Double -> Double
+    dobrar xs = xs*xs
+    
+    -- 5.1 TIPOS COM PARAMETROS
+    data Carteiras a = Vazia 
+                     | ComItem a 
+                     | ComItens a a deriving Show
+                     
+    mostrarPrimeiro :: Carteiras a -> a 
+    mostrarPrimeiro (ComItem x) = x
+    mostrarPrimeiro (ComItens x _) = x
+    
+    -- 5.2 RESTRIÇÃO DE TIPOS EM UMA FUNÇÃO
+    mostrar :: Show a => Carteiras a -> String
+    mostrar Vazia = "Carteira vazia..."
+    mostrar (ComItem x) = "Carteira com um item: " ++ show x
+    mostrar (ComItens x y) = "Item 1: " ++ show x ++ ", Item 2: " ++ show y
+    
+    -- só vou restringir se usar um TYPECLASS.
+    
+    -- 5.3 CLASSES DE TIPOS = INSTANCIAS.
+    -- typeclass é uma estrutura que habilita um operador (ou mais) ou uma função (ou mais) a ser usada de forma diferente, dependendo de um TYPE PARAMETER. Para cada tipo, uma instancia deverá ser definida, e com ela, a definição do operador ou da função que o typeclass provê.
+        -- lembra uma INTERFACE
+    data TypeClass a = Nenhum | UmNegocio a | DoisNegocios a a deriving (Show, Eq)
+    
+    -- se cair lance de instancia
+    -- Faça uma instancia de Eq para Tupla, onde duas Tuplas sao iguais se o primeiro elemento de uma for igual ao segundo elemento da outra.
+    data Tupla a = Tupla a a 
+    
+    instance (Eq a) => Eq (Tupla a) where
+        (Tupla a _) == (Tupla _ b) = (a == b)
+        
+    instance Show a => Show (Tupla a) where 
+        show (Tupla a b) = "fst: " ++ (show a) ++ " => snd: " ++ (show b)
+    -- LEMBRANDO, quando temos KIND 1 não preciso da restrição
+    
+    data Moeda = MDollar | MLibra | MReal
+    
+    instance Show Moeda where 
+        show MDollar = "Moeda dollar"
+        show MLibra = "Uau, Euro"
+        show MReal = "Meh, real"
+    
+    -- :t \x -> ["oa" ++ x]
+    -- \x -> ["oa" ++ x] :: [Char] -> [[Char]]
+    
+    -- AULA 61
+    class Predicado a where
+        predi :: a -> Bool
+        
+    instance Predicado [a] where 
+        predi [] = False
+        predi _ = True
+        
+    instance Predicado Char where 
+        predi ' ' = False 
+        predi _ = True
+        
+    instance Predicado Int where 
+        predi x
+            | x >= 0 = True
+            | otherwise = False
+            
+    instance Predicado Bool where 
+        predi = id
+    
+    {- MONOIDES = 5.5 -}
+    -- import Data.Monoid
+    {-
+        :t (<>)
+        (<>) :: Monoid m => m -> m -> m
+    -}
+    -- Product (getStum (Sum 7 <> Sum 3 <> mempty))  <> Product 2 = 20
+    -- getSum (Sum 7 <> Sum 3 <> mempty) = 10
+    
+    data Or = Or Bool deriving Show 
+    
+    instance Monoid Or where 
+        mempty = Or False 
+        mappend (Or False) (Or False) = Or True
+        mappend _ _ = Or True
+    
+    -- fazer exercicios do cap 5
+    
+    
+    {- CAPITULO 6 - TEORIA DAS CATEGORIAS -}
+    -- NÃO ENTENDI
+    
+    
+    {- CAPITULO 7 - FUNTOR -}
     
