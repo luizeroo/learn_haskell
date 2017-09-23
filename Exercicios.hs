@@ -382,7 +382,7 @@ let f2 = \x -> x ++ " MUNDO"
     funcao492 = foldl (\soma item -> soma+1) 0 $ filter (=='p') "pintinhoppp"
    
         -- 4.9.3 Contar sabados em uma lista de semanas
-    funcao493 = foldl (\resultado item -> resultado+1) 0 $ filter (==Sabado) [Segunda, Terca, Quarta, Sabado, Sabado, Domingo, Domingo, Terca, Sabado]
+    funcao493 xs = foldl (\resultado item -> resultado+1) 0 $ filter (==Sabado) xs
     
     -- Para, a partir de uma lista de [DiaSemana] , retornar a soma dos dias. Exemplo: [Segunda, Segunda, Quarta] deve retornar 5 . Use uma função auxiliar para converter DiaSemana para Int . 
     numD :: Dia -> Int
